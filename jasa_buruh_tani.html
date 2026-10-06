@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaniLink - Sewa Alat</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+
+    <!-- CDN Highchart -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+  </head>
+  <style>
+    /* --- MOBILE/TABLET (SIDEBAR SLIDE) --- */
+    @media (max-width: 1023px) {
+      #sidebar {
+        transform: translateX(-100%);
+        height: 100vh;
+        transition: transform 0.3s ease;
+        position: fixed;
+        top: 0;
+        left: 0;
+      }
+
+      #sidebar.mobile-open {
+        transform: translateX(0);
+      }
+    }
+
+    /* --- DESKTOP (SIDEBAR COLLAPSE) --- */
+    @media (min-width: 1024px) {
+      #sidebar {
+        width: 16rem;
+        transition: width 0.3s ease;
+        transform: none !important;
+      }
+
+      #sidebar.collapsed {
+        width: 4.5rem;
+      }
+
+      /* sembunyikan teks menu saja, bukan svg */
+      #sidebar.collapsed nav a span {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* layout nav */
+      #sidebar nav a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        white-space: nowrap;
+        transition: padding 0.3s ease, justify-content 0.3s ease;
+      }
+
+      #sidebar.collapsed nav a {
+        justify-content: center;
+        padding-left: 1.2rem !important;
+        padding-right: 1.2rem !important;
+      }
+
+      /* fix icon tetap tampil */
+      #sidebar.collapsed a svg {
+        opacity: 1 !important;
+        width: 24px;
+        height: 24px;
+        fill: #1f2937;
+      }
+    }
+  </style>
+
+  <body class="bg-gray-100">
+    <!-- Top Navigation Bar -->
+    <nav class="bg-[#e6ffc1] text-white px-5 py-3 shadow-md">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-8 w-58">
+          <div class="flex items-center gap-2">
+            <img
+              src="/assets/img/TaniLink (Gambar).png"
+              alt="Logo"
+              class="w-56 h-auto object-contain"
+            />
+          </div>
+        </div>
+        <button onclick="openSidebar()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-8 h-8 text-lime-600 cursor-pointer"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+        <div class="flex-1 flex items-center gap-6 px-2">
+          <div class="relative grow">
+            <input
+              type="text"
+              placeholder="Cari..."
+              class="w-full px-4 py-2 rounded-full text-white font-bold bg-[#7cb333] focus:outline-none focus:ring-2 focus:ring-white"
+            />
+            <svg
+              class="w-5 h-5 absolute right-3 top-1/2 -translate-y-1/2 text-white font-bold"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          <div class="flex items-center gap-4">
+            <button class="p-2 hover:bg-white/20 rounded-full">
+              <svg
+                class="w-6 h-6 text-lime-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+            </button>
+            <button class="p-2 hover:bg-white/20 rounded-full">
+              <svg
+                class="w-6 h-6 text-lime-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                />
+              </svg>
+            </button>
+            <button
+              id="adminMenuBtn"
+              class="p-2 hover:bg-white/20 rounded-full cursor-pointer hover:opacity-80 transition"
+            >
+              <svg
+                class="w-6 h-6 text-lime-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            </button>
+            <!-- Dropdown -->
+            <div
+              id="adminDropdown"
+              class="hidden absolute top-14 right-6 bg-white text-gray-700 rounded-md shadow-lg w-40 border border-gray-200 z-50"
+            >
+              <a href="./index.html">
+                <button
+                  class="w-full text-left px-4 py-2 text-green-600 hover:bg-red-50"
+                >
+                  Logout
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside
+        id="sidebar"
+        class="w-64 bg-white shadow-lg fixed md:relative z-20"
+      >
+        <nav class="p-4">
+          <ul class="space-y-2">
+            <li>
+              <a
+                href="Dashboard.html"
+                class="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-lg"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                  />
+                </svg>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="sewa_alat.html"
+                class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+                  />
+                </svg>
+                <span>Sewa Alat</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="jasa_buruh_tani.html"
+                class="flex items-center gap-3 px-4 py-3 bg-lime-50 text-lime-600 font-medium rounded-lg"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                <span>Jasa Buruh Tani</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="ai_smart.html"
+                class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                  />
+                </svg>
+                <span>AI Smart</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="dompet_digital.html"
+                class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                  />
+                </svg>
+                <span>Dompet Digital</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="rating_review.html"
+                class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                  />
+                </svg>
+                <span>Rating & Review</span>
+              </a>
+            </li>
+            <li>
+              <a
+                href="data_analitik.html"
+                class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
+                <span>Data Analitik</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main
+        class="flex-1 p-8 flex flex-col gap-4 overflow-x-hidden overflow-y-auto"
+      >
+        <!-- HERO SECTION -->
+        <div class="max-w-4xl mx-auto text-center">
+          <h1 class="text-3xl font-bold text-lime-600">Jasa Buruh Tani</h1>
+          <p class="text-gray-600 mt-2 text-sm md:text-base">
+            Dapatkan rekomendasi alat, tenaga kerja, dan pola tanam berdasarkan
+            kondisi lahan Anda.
+          </p>
+        </div>
+
+        <!-- Filters -->
+        <section class="w-full h-10 flex items-center gap-3">
+          <div class="relative h-full">
+            <select
+              class="appearance-none w-12 h-full rounded-xl bg-lime-600 text-transparent cursor-pointer outline-none hover:bg-lime-500 transition-all duration-200 focus:ring-2 focus:ring-lime-300"
+            >
+              <option class="bg-white text-neutral-800" value="highest">
+                Harga Tertinggi
+              </option>
+              <option class="bg-white text-neutral-800" value="lowest">
+                Harga Terendah
+              </option>
+            </select>
+
+            <!-- ICON SELECT -->
+            <span
+              class="pointer-events-none absolute inset-0 flex items-center justify-center text-white text-xl"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-list-filter-icon lucide-list-filter"
+              >
+                <path d="M2 5h20" />
+                <path d="M6 12h12" />
+                <path d="M9 19h6" />
+              </svg>
+            </span>
+          </div>
+
+          <div class="relative w-96 h-full">
+            <input
+              type="search"
+              class="w-full h-full rounded-xl px-4 outline outline-neutral-300 focus:outline-lime-600 transition-all duration-200"
+              placeholder="Cari jasa buruh tani disini..."
+            />
+            <button
+              type="button"
+              class="h-full absolute right-0 px-2 text-neutral-400 cursor-pointer"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-search-icon lucide-search"
+              >
+                <path d="m21 21-4.34-4.34" />
+                <circle cx="11" cy="11" r="8" />
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <section class="flex-1">
+          <ul
+            id="cards"
+            class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6"
+          >
+            <!-- <li
+                        class="h-full rounded border border-neutral-200 p-3 cursor-pointer overflow-hidden transition-all duration-300 ease-out hover:shadow-lg hover:-translate-y-1 hover:border-transparent">
+                        <img src="assets/img/jasa-buruh-tani.jpg" class="w-full h-36 object-cover rounded" alt="">
+                        <div>
+                            <h2 class="font-medium text-lg">Buruh Tani</h2>
+                            <h3 class="text-md">Rp.300.000,00</h3>
+                        </div>
+                        <div class="w-full flex items-center gap-2 lg:gap-4 flex-col lg:flex-row">
+                            <div class="flex md:w-full gap-px">
+                                <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                                <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                </svg>
+                            </div>
+                            <button type="button"
+                                class="flex-1 w-full bg-lime-600 px-3 py-1 rounded text-white font-medium">
+                                Sewa
+                            </button>
+                        </div>
+                    </li> -->
+          </ul>
+        </section>
+      </main>
+    </div>
+
+    <!-- Modal -->
+    <div
+      id="modal"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden"
+    >
+      <div
+        class="bg-white w-11/12 sm:w-96 rounded-xl p-5 shadow-xl relative animate-fadeIn"
+      >
+        <!-- Tombol Close -->
+        <button
+          id="closeModal"
+          class="absolute top-2 right-2 text-gray-600 hover:text-black text-xl cursor-pointer"
+        >
+          &times;
+        </button>
+
+        <!-- Konten Modal -->
+        <img id="modalGambar" class="w-full h-48 object-cover rounded mb-3" />
+        <h2 id="modalNama" class="text-xl font-semibold mb-1"></h2>
+        <p id="modalHarga" class="text-lg font-bold text-lime-700 mb-3"></p>
+        <p id="modalDeskripsi" class="text-md mb-3"></p>
+        <button
+          class="w-full bg-lime-600 text-white py-2 rounded-lg font-semibold mt-3 cursor-pointer"
+          onclick="finishPayment()"
+        >
+          Sewa Sekarang
+        </button>
+      </div>
+    </div>
+    <script>
+      const sidebar = document.getElementById("sidebar");
+      const overlay = document.getElementById("overlay");
+      const navLinks = document.querySelectorAll("#nav a");
+
+      function isMobile() {
+        return window.innerWidth < 1024;
+      }
+
+      function openSidebar() {
+        if (isMobile()) {
+          sidebar.classList.toggle("mobile-open");
+
+          if (sidebar.classList.contains("mobile-open")) {
+            overlay.classList.remove("hidden");
+          } else {
+            overlay.classList.add("hidden");
+          }
+        } else {
+          sidebar.classList.toggle("collapsed");
+        }
+      }
+
+      // Klik overlay → sidebar menutup
+      overlay.addEventListener("click", () => {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.add("hidden");
+      });
+
+      // Klik menu navigation → sidebar menutup di mobile
+      navLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          if (isMobile()) {
+            sidebar.classList.remove("mobile-open");
+            overlay.classList.add("hidden");
+          }
+        });
+      });
+
+      // Atur kondisi awal saat load/resize
+      function handleSidebarState() {
+        if (isMobile()) {
+          sidebar.classList.remove("collapsed");
+          sidebar.classList.remove("mobile-open");
+          overlay.classList.add("hidden");
+        } else {
+          sidebar.classList.remove("mobile-open");
+          overlay.classList.add("hidden");
+        }
+      }
+      window.addEventListener("resize", handleSidebarState);
+      window.addEventListener("load", handleSidebarState);
+    </script>
+    <script src="/assets/js/jasaBuruhTani.js"></script>
+    <script src="assets/js/dropdownuser.js"></script>
+
+  </body>
+</html>

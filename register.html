@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaniLink Daftar</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+
+  <body
+    class="flex items-center justify-center min-h-screen"
+    style="
+      background-image: url('./assets/img/sawah.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    "
+  >
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-white/60"></div>
+
+    <div class="relative z-10 w-full max-w-lg p-8 space-y-8">
+      <div class="flex flex-col items-center mb-6">
+        <img src="./assets/img/TaniLink (Gambar).png" class="w-60 h-auto" />
+        <h2 class="mt-2 text-2xl font-bold text-gray-800">
+          Daftar Akun TaniLink
+        </h2>
+      </div>
+
+      <div
+        class="p-8 bg-lime-600/80 rounded-xl shadow-2xl w-11/12 mx-auto max-w-sm"
+      >
+        <form class="space-y-4" onsubmit="register(event)">
+          <div class="relative">
+            <label
+              class="absolute top-2 left-4 text-xs font-semibold text-gray-700 uppercase"
+              >Nama Lengkap</label
+            >
+            <input type="text" id="nama"
+              type="text"
+              class="w-full p-4 pt-6 border-2 border-gray-300 rounded-lg bg-white/90 focus:border-lime-700"
+              required
+            />
+          </div>
+
+          <div class="relative">
+            <label
+              class="absolute top-2 left-4 text-xs font-semibold text-gray-700 uppercase"
+              >Email</label
+            >
+            <input type="email" id="regEmail" 
+              type="email"
+              class="w-full p-4 pt-6 border-2 border-gray-300 rounded-lg bg-white/90 focus:border-lime-700"
+              required
+            />
+          </div>
+
+          <div class="relative">
+            <label
+              class="absolute top-2 left-4 text-xs font-semibold text-gray-700 uppercase"
+              >Password</label
+            >
+            <input type="password" id="regPassword"
+              type="password"
+              class="w-full p-4 pt-6 border-2 border-gray-300 rounded-lg bg-white/90 focus:border-lime-700"
+              required
+            />
+          </div>
+
+          <div class="relative">
+            <label
+              class="absolute top-2 left-4 text-xs font-semibold text-gray-700 uppercase"
+              >Nomor Telepon</label
+            >
+            <input type="text" id="phone"
+              type="text"
+              class="w-full p-4 pt-6 border-2 border-gray-300 rounded-lg bg-white/90 focus:border-lime-700"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="w-full mt-3 py-2 font-bold text-white uppercase bg-gray-800 rounded-lg hover:bg-gray-700 transition"
+          >
+            Buat Akun
+          </button>
+
+          <p class="mt-4 text-center text-sm text-gray-700">
+            Sudah punya akun?
+            <a
+              href="./index.html"
+              class="font-semibold text-blue-800 hover:underline"
+              >Login</a
+            >
+          </p>
+        </form>
+      </div>
+    </div>
+    <script>
+      // Ambil daftar user yang sudah ada di localStorage (jika ada)
+      function getUsers() {
+        const data = localStorage.getItem("registered_users");
+        return data ? JSON.parse(data) : [];
+      }
+
+      // Simpan daftar user ke localStorage
+      function saveUsers(users) {
+        localStorage.setItem("registered_users", JSON.stringify(users));
+      }
+
+      function register(event) {
+        event.preventDefault(); // Cegah reload halaman
+
+        const nama = document.getElementById("nama").value.trim();
+        const email = document.getElementById("regEmail").value.trim();
+        const password = document.getElementById("regPassword").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+
+        if (!nama || !email || !password || !phone) {
+          alert("Semua field harus diisi!");
+          return;
+        }
+
+        let users = getUsers();
+
+        // Cek apakah email sudah terdaftar
+        if (users.some((u) => u.email === email)) {
+          alert("Email sudah terdaftar, silakan login.");
+          return;
+        }
+
+        // Tambahkan user baru
+        users.push({
+          name: nama,
+          email: email,
+          password: password,
+          phone: phone,
+          role: "user",
+        });
+
+        saveUsers(users);
+
+        // Set informasi login langsung
+        localStorage.setItem("user", email);
+        localStorage.setItem("role", "user");
+
+        alert("Pendaftaran berhasil!");
+
+        // Redirect ke dashboard user
+        window.location.href = "/dashboard.html";
+      }
+    </script>
+  </body>
+</html>

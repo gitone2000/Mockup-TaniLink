@@ -1,0 +1,226 @@
+* {
+    /* border: 1px solid red; */
+}
+
+.animateOutput {
+    animation: animateOutput 0.5s ease;
+}
+
+@keyframes animateOutput {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.25s ease-out;
+}
+
+
+/* ===== Global Table Styling: Modern & Clean (Green-ish Palette) ===== */
+table.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px; /* Sedikit lebih besar untuk keterbacaan */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font yang lebih modern */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Sedikit bayangan untuk mengangkat tabel */
+    border: 1px solid #e0e0e0; /* Border luar yang sangat tipis dan lembut */
+    border-radius: 8px; /* Sudut membulat pada tabel */
+    overflow: hidden; /* Penting untuk radius border */
+}
+
+/* Header */
+table.custom-table thead th {
+    background: #47ce4b; /* Hijau cerah untuk header */
+    color: #ffffff; /* Teks putih untuk kontras yang baik */
+    padding: 12px 15px; /* Padding yang lebih baik */
+    text-align: left; /* Rata kiri untuk header */
+    font-weight: 700;
+    letter-spacing: 0.5px; /* Sedikit spasi huruf */
+    border-bottom: 3px solid #388e3c; /* Garis bawah yang lebih tebal */
+}
+
+/* Body Cell */
+table.custom-table tbody td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0; /* Hanya border bawah yang lembut */
+    color: #333;
+    transition: background-color 0.2s ease; /* Transisi untuk hover */
+    text-align: left; /* Rata kiri untuk header */
+}
+
+/* Cell alignment for numbers/actions (optional, based on content) */
+table.custom-table tbody td.align-right {
+    text-align: right;
+}
+
+/* Row Hover */
+table.custom-table tbody tr:hover {
+    background-color: #e8f5e9; /* Hover yang sangat lembut */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Zebra Stripes (Row Banding) */
+table.custom-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+table.custom-table tbody tr:nth-child(even) {
+    background-color: #f7f7f7; /* Warna zebra yang sedikit lebih gelap dari putih */
+}
+
+/* Last Row */
+table.custom-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* FILTER ZONE====================================== */
+/* Style filter */
+
+.dataTables_filter {
+    margin-bottom: 10px;
+}
+
+.dataTables_filter label {
+    font-weight: 600;
+    color: #555;
+}
+
+.dataTables_filter input {
+    border: 1px solid #d1d5db;
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    outline: none;
+    transition: .2s;
+}
+
+.dataTables_filter input:focus {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, .3);
+}
+
+.dataTables_length select {
+    border: 1px solid #d1d5db;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+/* Position Filter*/
+.dataTables_wrapper .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    text-align: right !important;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin: 10px 0;
+}
+/* FILTER ZONE END=============================== */
+
+/* INFO ZONE===================================== */
+/* Style Info */
+.dataTables_info {
+    margin-top: 10px;
+    color: #555;
+    font-size: 14px;
+}
+/* INFO ZONE END================================ */
+
+/* PAGINATION ZONE============================== */
+/* Style pagination */
+.dataTables_paginate {
+    margin-top: 15px;
+}
+
+.dataTables_paginate .paginate_button {
+    padding: 6px 12px !important;
+    margin: 0 3px !important;
+    border-radius: 6px !important;
+    border: 1px solid #d1d5db !important;
+    color: #333 !important;
+}
+
+.dataTables_paginate .paginate_button:hover {
+    background: #e6ffe6 !important;
+    border-color: #22c55e !important;
+    color: #22c55e !important;
+}
+
+.dataTables_paginate .paginate_button.current {
+    background: #22c55e !important;
+    color: white !important;
+    border-color: #22c55e !important;
+}
+
+.dataTables_paginate .paginate_button.disabled {
+    opacity: 0.4;
+    cursor: default !important;
+}
+
+/* Position Pagination */
+/* Info text ("Showing 1 to ...") tetap di kiri */
+.dataTables_wrapper .dataTables_info {
+    margin: 10px;
+}
+
+/* Pagination di kanan */
+.dataTables_wrapper .dataTables_paginate {
+    margin-top: 0;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+}
+
+/* Reset float default */
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    float: none !important;
+}
+
+/* Bikin baris bawah jadi flex */
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    display: flex;
+    align-items: center;
+}
+
+/* Layout kanan-kiri */
+.dataTables_wrapper .dataTables_info {
+    justify-content: flex-start;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    justify-content: flex-end;
+}
+/* PAGINATION ZONE END==================================== */
+
+
+
+
+
+
+

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaniLink Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+
+  <body
+    class="flex items-center justify-center min-h-screen"
+    style="
+      background-image: url('./assets/img/sawah.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    "
+  >
+    <!-- Overlay Opacity -->
+    <div class="absolute inset-0 bg-white/60"></div>
+
+    <div class="z-10 w-full max-w-lg p-8 space-y-8">
+      <div class="flex flex-col items-center justify-center mb-4">
+        <div class="flex items-center justify-center">
+          <img
+            src="/assets/img/TaniLink (Gambar).png"
+            alt="Logo"
+            class="w-92 h-auto object-contain"
+          />
+        </div>
+      </div>
+
+      <div
+        class="p-8 mx-auto rounded-xl shadow-2xl bg-lime-600/80 w-11/12 max-w-sm"
+      >
+        <form class="space-y-4">
+          <div class="relative">
+            <label
+              for="email"
+              class="absolute top-2 left-4 text-xs font-semibold text-gray-700 uppercase pointer-events-none"
+              >Email</label
+            >
+            <input
+              type="email"
+              id="email"
+              placeholder=""
+              class="w-full p-4 pt-6 text-gray-900 placeholder-transparent border-2 border-gray-300 rounded-lg shadow-inner focus:outline-none focus:border-lime-700 bg-white/90"
+              required
+            />
+          </div>
+
+          <div class="relative">
+            <label
+              for="password"
+              class="absolute top-2 left-4 text-xs font-semibold text-gray-700 uppercase pointer-events-none"
+              >Password</label
+            >
+            <input
+              type="password"
+              id="password"
+              placeholder=""
+              class="w-full p-4 pt-6 text-gray-900 placeholder-transparent border-2 border-gray-300 rounded-lg shadow-inner focus:outline-none focus:border-lime-700 bg-white/90"
+              required
+            />
+          </div>
+
+          <div class="flex justify-between pt-4">
+            <a
+              href="./register.html"
+              type="button"
+              class="px-6 py-2 text-sm font-bold text-white uppercase bg-gray-800 rounded-lg shadow-lg hover:bg-gray-700 transition duration-150"
+            >
+              Daftar
+            </a>
+            <button
+              type="button"
+              onclick="login()"
+              class="px-6 py-2 text-sm font-bold text-white uppercase bg-gray-800 rounded-lg shadow-lg hover:bg-gray-700 transition duration-150"
+            >
+              Login
+            </button>
+
+            <!-- <a
+              href="./Dashboard.html"
+              type="submit"
+              class="px-6 py-2 text-sm font-bold text-white uppercase bg-gray-800 rounded-lg shadow-lg hover:bg-gray-700 transition duration-150"
+            >
+              Login
+            </a> -->
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      const staticUsers = [
+        { email: "admin@gmail.com", password: "123", role: "admin" },
+        { email: "user@gmail.com", password: "123", role: "user" },
+      ];
+
+      function getUsers() {
+        const data = localStorage.getItem("registered_users");
+        return data ? JSON.parse(data) : [];
+      }
+
+      function login() {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        // VALIDASI INPUT KOSONG
+        if (email === "") {
+          alert("Email harus diisi!");
+          return;
+        }
+
+        if (password === "") {
+          alert("Password harus diisi!");
+          return;
+        }
+
+        // AMBIL SEMUA USER
+        let users = [...staticUsers, ...getUsers()];
+
+        // CEK USER TERDAFTAR
+        const user = users.find(
+          (u) => u.email === email && u.password === password
+        );
+
+        // JIKA USER TIDAK ADA
+        if (!user) {
+          alert("Email atau password salah!");
+          return;
+        }
+
+        // JIKA BERHASIL LOGIN
+        localStorage.setItem("user", user.email);
+        localStorage.setItem("role", user.role);
+
+        if (user.role === "admin") {
+          window.location.href = "/admin-dashboard.html";
+        } else {
+          window.location.href = "/dashboard.html";
+        }
+      }
+    </script>
+
+    <script>
+      document
+        .getElementById("pickBg")
+        .addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            document.body.style.backgroundImage = `url('${event.target.result}')`;
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundPosition = "center";
+            document.body.style.backgroundRepeat = "no-repeat";
+          };
+
+          reader.readAsDataURL(file);
+        });
+    </script>
+  </body>
+</html>
